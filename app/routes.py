@@ -40,13 +40,9 @@ def get_all_notes(): # Return a list of objects of NoteResponse
 
     notes = []
     for row in rows:
-        notes.append(NoteResponse(
-            id = row[0],
-            title = row[1],
-            description= row[2],
-            status = row[3],
-            created_at = row[4]
-        ))
+        note = note_response(row)
+        if note:
+            notes.append(note)
 
     return notes
 
