@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from models.note import NoteCreate, NoteResponse
+from models.note import NoteCreate, NoteResponse, note_response
 from database.connection import get_db
 
 #starting router
@@ -87,3 +87,25 @@ def delete_note(note_id: int):
     conn.close()
 
     return {"Message": "Note Deleted, id: {}".format(note_id)}
+
+#PUT method to update notes by id
+@router.put("/notes/{note_id}")
+def update_note(note_id: int, new_note: NoteCreate):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+                UPDATE notes SET title = ?, description = ?, status = ?
+                    WHERE id = ?
+                   """,(new_note.title, new_note.description, new_note.status, note_id))
+
+    conn.commit()
+
+    cursor.execute("SELECT * FROM notes WHERE id = ?",(note_id,))
+    row = cursor.fetchone()
+
+    conn.close()
+
+    note = note_response(row)
+    if note is None:
+        return {"Error": "Note Not Found"}
+    return note
