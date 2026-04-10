@@ -1,6 +1,6 @@
 import sqlite3
 from fastapi import APIRouter
-from models.note import NoteCreate, Note
+from models.note import NoteCreate, Note, NoteResponse
 from database.connection import get_db
 
 router = APIRouter()
@@ -25,7 +25,7 @@ def create_note(newNote: NoteCreate):
     return {"Message": "Note Created"}
 
 
-@router.get("/notes")
+@router.get("/notes", response_model=list[NoteResponse])
 def get_all_notes():
     conn = get_db()
     cursor = conn.cursor()
@@ -36,4 +36,16 @@ def get_all_notes():
 
     rows = cursor.fetchall()
     conn.close()
-    return rows
+
+    notes = []
+    for row in rows:
+        notes.append(NoteResponse(
+            id = row[0],
+            title = row[1],
+            description= row[2],
+            status = row[3],
+            created_at = row[4]
+        ))
+
+    return notes
+
