@@ -10,7 +10,7 @@ def home():
     return {"Massage": "API running"}
 
 
-@router.post("/notes")  #POST method to create notes
+@router.post("/notes", status_code=201)  #POST method to create notes
 def create_note(new_note: NoteCreate):
     conn = get_db()
     cursor = conn.cursor()
@@ -22,7 +22,7 @@ def create_note(new_note: NoteCreate):
     conn.commit()
     conn.close()
 
-    raise HTTPException(status_code=201, detail="Note Created")
+    return {"message": "Note Created"}
 
 
 #GET method for getting all notes
