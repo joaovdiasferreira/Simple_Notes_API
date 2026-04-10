@@ -6,7 +6,7 @@ def db_init():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS notes (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         status TEXT NOT NULL CHECK (status IN ('pending', 'done', 'canceled')),
@@ -17,7 +17,7 @@ def db_init():
     conn.commit()
     conn.close()
 
-    # run in terminal: python -c "from database.db import init_db; init_db()"
+    # run in terminal: python -c "from database.connection import db_init; db_init()"
 
 def get_db():
     return sqlite3.connect("database/app.db")
