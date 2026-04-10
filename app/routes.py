@@ -11,13 +11,13 @@ def home():
 
 
 @router.post("/notes")
-def create_note(newNote: NoteCreate):
+def create_note(new_note: NoteCreate):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO notes (title, description, status)
         VALUES (?, ?, ?)
-    """, (newNote.title, newNote.description, newNote.status))
+    """, (new_note.title, new_note.description, new_note.status))
 
     conn.commit()
     conn.close()
