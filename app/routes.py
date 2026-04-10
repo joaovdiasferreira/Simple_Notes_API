@@ -25,6 +25,7 @@ def create_note(new_note: NoteCreate):
     return {"Message": "Note Created"}
 
 
+#POST method for getting all notes
 @router.get("/notes", response_model=list[NoteResponse])
 def get_all_notes():
     conn = get_db()
@@ -49,3 +50,26 @@ def get_all_notes():
 
     return notes
 
+#POST method for getting a single note by id
+@router.get("/notes/{note_id}", response_model=NoteResponse)
+def get_note(note_id: int):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+                   SELECT * FROM notes WHERE id = ?
+                   """, (note_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if row is None:
+        return {"Error": "Note Not Found"}
+
+    return NoteResponse(
+        id = row[0],
+        title = row[1],
+        description = row[2],
+        status = row[3],
+        created_at = row[4]
+    )
