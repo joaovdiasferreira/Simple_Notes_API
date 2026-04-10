@@ -1,6 +1,5 @@
-import sqlite3
 from fastapi import APIRouter
-from models.note import NoteCreate, Note, NoteResponse
+from models.note import NoteCreate, NoteResponse
 from database.connection import get_db
 
 #starting router
@@ -74,3 +73,17 @@ def get_note(note_id: int): # Return an object of NoteResponse
         status = row[3],
         created_at = row[4]
     )
+
+#DELETE method using note id
+@router.delete("/notes/{note_id}")
+def delete_note(note_id: int):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+                   DELETE FROM notes WHERE id = ?
+                   """, (note_id,))
+    conn.commit()
+    conn.close()
+
+    return {"Message": "Note Deleted, id: {}".format(note_id)}
