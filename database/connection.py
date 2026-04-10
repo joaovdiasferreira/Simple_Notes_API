@@ -10,7 +10,7 @@ def db_init():
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         status TEXT NOT NULL CHECK (status IN ('pending', 'done', 'canceled')),
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'localtime'))
         )
     """)
 
