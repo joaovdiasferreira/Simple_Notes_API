@@ -18,3 +18,15 @@ class NoteResponse(BaseModel):
     description: str
     status: str
     created_at: str
+
+def note_response(row: dict):
+    if row is None:
+        return None
+
+    return NoteResponse(
+        id=row[0],
+        title=row[1],
+        description=row[2],
+        status=row[3],
+        created_at=row[4],
+    )
