@@ -1,5 +1,6 @@
 import sqlite3
 
+# Initial function to create database and notes tables
 def db_init():
     conn = sqlite3.connect("database/app.db")
     cursor = conn.cursor()
@@ -19,5 +20,5 @@ def db_init():
 
     # run in terminal: python -c "from database.connection import db_init; db_init()"
 
-def get_db():
+def get_db():   # Helper function to get connection with database
     return sqlite3.connect("database/app.db")

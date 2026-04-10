@@ -3,14 +3,15 @@ from fastapi import APIRouter
 from models.note import NoteCreate, Note, NoteResponse
 from database.connection import get_db
 
+#starting router
 router = APIRouter()
 
-@router.get("/")
+@router.get("/")    #Home route
 def home():
     return {"Massage": "API running"}
 
 
-@router.post("/notes")
+@router.post("/notes")  #POST method to create notes
 def create_note(new_note: NoteCreate):
     conn = get_db()
     cursor = conn.cursor()
@@ -25,9 +26,9 @@ def create_note(new_note: NoteCreate):
     return {"Message": "Note Created"}
 
 
-#POST method for getting all notes
+#GET method for getting all notes
 @router.get("/notes", response_model=list[NoteResponse])
-def get_all_notes():
+def get_all_notes(): # Return a list of objects of NoteResponse
     conn = get_db()
     cursor = conn.cursor()
 
@@ -50,9 +51,9 @@ def get_all_notes():
 
     return notes
 
-#POST method for getting a single note by id
+#GET method for getting a single note by id
 @router.get("/notes/{note_id}", response_model=NoteResponse)
-def get_note(note_id: int):
+def get_note(note_id: int): # Return an object of NoteResponse
     conn = get_db()
     cursor = conn.cursor()
 
