@@ -7,7 +7,7 @@ router = APIRouter()
 
 @router.get("/")    #Home route
 def home():
-    return {"Massage": "API running"}
+    return {"Message": "API running"}
 
 
 @router.post("/notes", status_code=201)  #POST method to create notes
@@ -22,7 +22,7 @@ def create_note(new_note: NoteCreate):
     conn.commit()
     conn.close()
 
-    return {"message": "Note Created"}
+    return {"Message": "Note Created"}
 
 
 #GET method for getting all notes
@@ -74,9 +74,13 @@ def delete_note(note_id: int):
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
-                   DELETE FROM notes WHERE id = ?
-                   """, (note_id,))
+    cursor.execute("SELECT * FROM notes WHERE id = ?",(note_id,))
+    row = cursor.fetchone()
+    if row is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Note Not Found")
+
+    cursor.execute("DELETE FROM notes WHERE id = ?", (note_id,))
     conn.commit()
     conn.close()
 
