@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from models.note import NoteCreate, NoteResponse, note_response
 from database.connection import get_db
 
@@ -22,7 +22,7 @@ def create_note(new_note: NoteCreate):
     conn.commit()
     conn.close()
 
-    return {"Message": "Note Created"}
+    raise HTTPException(status_code=201, detail="Note Created")
 
 
 #GET method for getting all notes
@@ -63,16 +63,10 @@ def get_note(note_id: int): # Return an object of NoteResponse
     row = cursor.fetchone()
     conn.close()
 
-    if row is None:
-        return {"Error": "Note Not Found"}
-
-    return NoteResponse(
-        id = row[0],
-        title = row[1],
-        description = row[2],
-        status = row[3],
-        created_at = row[4]
-    )
+    note = note_response(row)
+    if note is None:
+        raise HTTPException(status_code=404, detail="Note Not Found")
+    return note
 
 #DELETE method using note id
 @router.delete("/notes/{note_id}")
@@ -89,7 +83,7 @@ def delete_note(note_id: int):
     return {"Message": "Note Deleted, id: {}".format(note_id)}
 
 #PUT method to update notes by id
-@router.put("/notes/{note_id}")
+@router.put("/notes/{note_id}", response_model=NoteResponse)
 def update_note(note_id: int, new_note: NoteCreate):
     conn = get_db()
     cursor = conn.cursor()
@@ -107,5 +101,5 @@ def update_note(note_id: int, new_note: NoteCreate):
 
     note = note_response(row)
     if note is None:
-        return {"Error": "Note Not Found"}
+        raise HTTPException(status_code=404, detail="Note Not Found")
     return note
